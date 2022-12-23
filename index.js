@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const winston_1 = __importDefault(require("winston"));
+const hello_1 = __importDefault(require("./routes/hello"));
+const user_1 = __importDefault(require("./routes/user"));
+const customFields_1 = __importDefault(require("./routes/customFields"));
+const serviceProvider_1 = __importDefault(require("./routes/serviceProvider"));
+const app = (0, express_1.default)();
+dotenv_1.default.config();
+app.use(express_1.default.json());
+app.use("/api/v1", hello_1.default);
+app.use("/api/v1", user_1.default);
+app.use("/api/v1", customFields_1.default);
+app.use("/api/v1", serviceProvider_1.default);
+const port = process.env.PORT;
+app.listen(port, () => winston_1.default.info(`Server started on port ${port}`));

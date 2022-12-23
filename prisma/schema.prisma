@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(uuid())
+  name              String
+  email             String             @unique
+  password          String             @db.VarChar(20)
+  isClient          Boolean?           @default(false)
+  isServiceProvider Boolean?           @default(false)
+  isActive          Boolean?           @default(true)
+  role              Role?              @default(USER)
+  personalAddress   String
+  city              String
+  pincode           Int
+  createdAt         DateTime?          @default(now())
+  CustomFormFields  CustomFormFields[]
+}
+
+model CustomFormFields {
+  id                    String                  @id @default(uuid())
+  label                 String
+  identifier            String
+  fieldType             Types
+  forProfession         Profession?             @default(GENERIC)
+  status                Status?                 @default(ACTIVE)
+  isMandatory           Boolean?                @default(false)
+  canBeNull             Boolean?                @default(false)
+  isUnique              Boolean?                @default(false)
+  isUpdatable           Boolean?                @default(true)
+  createdAt             DateTime?               @default(now())
+  addedBy               User                    @relation(fields: [userId], references: [id])
+  userId                String
+  CustomFormFieldsValue CustomFormFieldsValue[]
+}
+
+model CustomFormFieldsValue {
+  id                 String           @id @default(uuid())
+  customFormFields   CustomFormFields @relation(fields: [customFormFieldsId], references: [id])
+  customFormFieldsId String
+  jsonData           Json?
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Types {
+  INTEGER
+  STR
+  LONG
+  BOOL
+  DATE
+  OPTIONS
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+}
+
+enum Profession {
+  DOCTOR
+  BARBER
+  LOCAL_MARTS
+  DENTIST
+  LAND_LORD
+  GENERIC
+}
